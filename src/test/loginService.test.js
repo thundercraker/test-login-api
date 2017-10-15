@@ -1,16 +1,32 @@
 const expect = require('chai').expect;
 const expectEx = require('./utils.js').expectException('ValidationException');
-const loginService = require('../main/services/loginService.js');
+const {getHash, LoginService} =
+    require('../main/services/loginService.js');
 
 const longText = '_______________________________________________' +
                     '_______________________________________________';
+const hash = 'f0a215a8dbcf4ec874515051da62f8ab388555a15d1a2a29b7b2d5d304f38e68';
+const salt = 'salty';
+
+const fakeDB = {
+    getAuthInfo: (id, type) => {
+        if (type === 1) {
+            return {
+                auth: hash + '/' + salt,
+            };
+        }
+        return null;
+    },
+};
+const loginService = new LoginService(fakeDB);
 
 describe('Login Service', () => {
-    describe('hashPassword', () => {
-        const a = loginService.hashPassword('aaaaa');
-        const b = loginService.hashPassword('aaaaa');
-        expect(a.salt).to.be.not.equal(b.salt);
-        expect(a.hash).to.be.not.equal(b.hash);
+    describe('getHash', () => {
+        const a = getHash('aaaaa', 'salt');
+        const b = getHash('aaaaa', 'salt');
+        expect(a).to.be.equal(b);
+        const c = getHash('aaaaa', 'salty');
+        expect(a).to.be.not.equal(c);
     });
     describe('login', () => {
         it('should complain on empty username', () => {
@@ -36,6 +52,12 @@ describe('Login Service', () => {
         });
         it('should complain on long password', () => {
             expectEx(() => loginService.login('aaa', longText));
+        });
+        it('should not login', () => {
+            loginService.login('aaa', 'bb');
+        });
+        it('should login', () => {
+            loginService.login('aaa', 'bbb');
         });
     });
 });
