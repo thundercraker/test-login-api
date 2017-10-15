@@ -6,21 +6,12 @@ const logger = new (winston.Logger)({
   ],
 });
 
-// TODO uncomment this when api is production ready
-// if (process.env.NODE_ENV !== 'production') {
-//   logger.add(new winston.transports.Console({
-//     format: winston.format.simple()
-//   }));
-// }
-
-const logAction = (func) => {
+const logAction = (func, recover) => {
     try {
         func();
     } catch (e) {
-        logger.log({
-            level: 'error',
-            message: e,
-        });
+        logger.error(e);
+        recover();
     }
 };
 

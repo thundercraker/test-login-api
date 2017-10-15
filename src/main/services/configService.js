@@ -11,6 +11,7 @@ class ConfigService {
     constructor() {
         this.env = process.env['NODE_ENV'];
         this.name = config.get('service_name');
+        this.version = config.get('service_version');
         this.port = config.get('port');
     }
 }

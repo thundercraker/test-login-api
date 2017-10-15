@@ -6,7 +6,7 @@ const ExceptionID = {
 };
 
 /**
- * Object for validation exceptions
+ * Object for exceptions
  */
 class ApiException {
     /**

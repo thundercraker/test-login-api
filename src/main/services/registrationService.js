@@ -19,7 +19,7 @@ class RegistrationService {
     /**
      * Register new user using request
      * @param {Object} request - New user details
-     * @return {boolean} - will return true
+     * @return {Promise} - will return promise
      */
     register(request) {
         validateStr('Username', 4, 60)(request.username);
@@ -27,13 +27,12 @@ class RegistrationService {
         validateStr('First Name', 1, 24, specialCharRegex)(request.firstname);
         validateStr('Last Name', 1, 24, specialCharRegex)(request.lastname);
         const salt = cryptoRandomString(12);
-        this.dbService.register(
+        return this.dbService.register(
             request.username,
             getHash(request.password, salt),
             request.firstname,
             request.lastname,
             salt);
-        return true;
     }
 };
 
