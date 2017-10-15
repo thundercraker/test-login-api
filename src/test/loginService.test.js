@@ -1,11 +1,12 @@
 const expect = require('chai').expect;
-const expectEx = require('./utils.js').expectException('ValidationException');
-const {getHash, LoginService} =
-    require('../main/services/loginService.js');
+
+const ExceptionID = require('../main/exceptions.js').ExceptionID;
+const expectEx = require('./utils.js').expectException;
+const LoginService = require('../main/services/loginService.js');
 
 const longText = '_______________________________________________' +
                     '_______________________________________________';
-const hash = 'f0a215a8dbcf4ec874515051da62f8ab388555a15d1a2a29b7b2d5d304f38e68';
+const hash = '9d2ac96d39cb002a971d429bb8f426b3fae094ff24be279a6599a5526bf7d102';
 const salt = 'salty';
 
 const fakeDB = {
@@ -21,43 +22,46 @@ const fakeDB = {
 const loginService = new LoginService(fakeDB);
 
 describe('Login Service', () => {
-    describe('getHash', () => {
-        const a = getHash('aaaaa', 'salt');
-        const b = getHash('aaaaa', 'salt');
-        expect(a).to.be.equal(b);
-        const c = getHash('aaaaa', 'salty');
-        expect(a).to.be.not.equal(c);
-    });
     describe('login', () => {
         it('should complain on empty username', () => {
-            expectEx(() => loginService.login('', 'aaa'));
+            expectEx(ExceptionID.ArgumentTooShort)(
+                () => loginService.login('', 'aaaaaa'));
         });
         it('should complain on non-string username', () => {
-            expectEx(() => loginService.login(42, 'aaa'));
+            expectEx(ExceptionID.ArgumentMustBeAString)(
+                () => loginService.login(42, 'aaaaaa'));
         });
         it('should complain on special chars username', () => {
-            expectEx(() => loginService.login('#^&%', 'aaa'));
+            expectEx(ExceptionID.ArgumentHasSpecialChar)(
+                () => loginService.login('#^&%&*^%', 'aaaaaa'));
         });
         it('should complain on long username', () => {
-            expectEx(() => loginService.login(longText, 'aaa'));
+            expectEx(ExceptionID.ArgumentTooLong)(
+                () => loginService.login(longText, 'aaaaaa'));
         });
         it('should complain on empty password', () => {
-            expectEx(() => loginService.login('aaa', ''));
+            expectEx(ExceptionID.ArgumentTooShort)(
+                () => loginService.login('aaaaaa', ''));
         });
         it('should complain on non-string password', () => {
-            expectEx(() => loginService.login('aaa', 42));
+            expectEx(ExceptionID.ArgumentMustBeAString)(
+                () => loginService.login('aaaaaa', 42));
         });
         it('should complain on special chars password', () => {
-            expectEx(() => loginService.login('aaa', '#^&%'));
+            expectEx(ExceptionID.ArgumentHasSpecialChar)(
+                () => loginService.login('aaaaaa', '#^&%&^"%$'));
         });
         it('should complain on long password', () => {
-            expectEx(() => loginService.login('aaa', longText));
+            expectEx(ExceptionID.ArgumentTooLong)(
+                () => loginService.login('aaaaaa', longText));
         });
         it('should not login', () => {
-            loginService.login('aaa', 'bb');
+            expect(loginService.login('aaaaaa', 'bbbbbb'))
+                .to.be.false;
         });
         it('should login', () => {
-            loginService.login('aaa', 'bbb');
+            expect(loginService.login('aaaaaa', 'bbbccc'))
+                .to.be.true;
         });
     });
 });

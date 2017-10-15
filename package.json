@@ -4,7 +4,7 @@
   "description": "A simple example of an api capable of providing a login service for users",
   "main": "index.js",
   "scripts": {
-    "test": "changelater"
+    "test": "mocha ./src/test/"
   },
   "keywords": [
     "login",

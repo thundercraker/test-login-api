@@ -1,12 +1,16 @@
 const expect = require('chai').expect;
 
 module.exports = {
-    expectException: (name) => {
+    expectException: (type, cause) => {
         return (func) => {
             try {
                 func();
             } catch (e) {
-                expect(e.name).to.be.equal(name);
+                if (e.type === undefined) throw e;
+                expect(e.type).to.be.equal(type);
+                if (cause !== undefined) {
+                    expect(e.cause).to.be.equal(cause);
+                }
             }
         };
     },
