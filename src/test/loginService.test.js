@@ -10,14 +10,17 @@ const hash = '9d2ac96d39cb002a971d429bb8f426b3fae094ff24be279a6599a5526bf7d102';
 const salt = 'salty';
 
 const fakeDB = {
-    getAuthInfo: (id, type) => {
-        if (type === 1) {
-            return {
-                auth: hash + '/' + salt,
-            };
-        }
-        return null;
+    getAuthInfoByUsernameAndType: (id, type) => {
+        return new Promise((res, rej) => {
+            if (type === 1) {
+                res({
+                    r_auth: hash + '/' + salt,
+                });
+            }
+            rej();
+        });
     },
+    updateLastLogin: (id) => { },
 };
 const loginService = new LoginService(fakeDB);
 
@@ -55,13 +58,19 @@ describe('Login Service', () => {
             expectEx(ExceptionID.ArgumentTooLong)(
                 () => loginService.login('aaaaaa', longText));
         });
-        it('should not login', () => {
-            expect(loginService.login('aaaaaa', 'bbbbbb'))
-                .to.be.false;
+        it('should not login', (done) => {
+            loginService.login('aaaaaa', 'bbbbbb').then((result) => {
+                expect(result).to.be.false;
+                done();
+            }, (err) => {
+                expect.fail(err);
+            });
         });
-        it('should login', () => {
-            expect(loginService.login('aaaaaa', 'bbbccc'))
-                .to.be.true;
+        it('should login', (done) => {
+            loginService.login('aaaaaa', 'bbbccc').then((result) => {
+                expect(result).to.be.true;
+                done();
+            }, (err) => expect.fail(err));
         });
     });
 });

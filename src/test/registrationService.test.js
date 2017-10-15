@@ -6,7 +6,9 @@ const RegistrationSvc = require('../main/services/registrationService.js');
 
 const fakeDB = {
     register: () => {
-
+        return new Promise((res, rej) => {
+            res();
+        });
     },
 };
 
@@ -64,9 +66,14 @@ describe('Registration Service', () => {
                 firstname: 'firstname', lastname: longText}));
         });
         it('should register', () => {
-            expect(svc.register({username: 'user93', password: 'pass93',
-                firstname: 'firstname', lastname: 'lastname'}))
-                .to.be.true;
+            svc.register({username: 'user93', password: 'pass93',
+                firstname: 'firstname', lastname: 'lastname'})
+                .then(() => {
+                    done();
+                }).catch((err) => {
+                    expect.fail(err);
+                    done();
+                });
         });
     });
 });

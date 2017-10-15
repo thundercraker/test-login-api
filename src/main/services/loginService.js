@@ -1,5 +1,6 @@
 const getHash = require('./crypto.js').getHash;
 const validateStr = require('../util.js').validateStr;
+const logger = require('./logger.js');
 
 /**
  * Service for login actions
@@ -19,18 +20,27 @@ class LoginService {
      * Login with username and password
      * @param {string} username - Username
      * @param {string} password - Password
-     * @return {boolean} true or false
+     * @return {Promise} promise with true or false
      */
     login(username, password) {
         validateStr('Username', 4, 60)(username);
         validateStr('Password', 6, 24, /^[^"']*$/)(password);
 
-        const userAuthRow = this.dbService.getAuthInfo(username, 1);
-        if (userAuthRow != null) {
-            const hashAndSalt = userAuthRow.auth.split('/');
-            return hashAndSalt[0] === getHash(password, hashAndSalt[1]);
-        }
-        return false;
+        return this.dbService.getAuthInfoByUsernameAndType(username, 1)
+            .then((userAuthRow) => {
+                if (userAuthRow != null) {
+                    const hashAndSalt = userAuthRow.r_auth.split('/');
+                    if (hashAndSalt[0] === getHash(password, hashAndSalt[1])) {
+                        this.dbService.updateLastLogin(userAuthRow.r_user_id);
+                        return true;
+                    }
+                    return false;
+                }
+                return false;
+            })
+            .catch((err) => {
+                logger.error(err);
+            });
     }
 }
 
