@@ -1,0 +1,4 @@
+{
+    "service_name" : "Login API",
+    "port": "8080"
+}

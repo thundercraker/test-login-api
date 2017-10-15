@@ -14,15 +14,15 @@
   "author": "Yumashish Subba",
   "license": "ISC",
   "devDependencies": {
+    "eslint-config-google": "^0.9.1",
     "gulp": "^3.9.1",
-    "gulp-jshint": "^2.0.4",
-    "gulp-jslint": "^1.0.10",
     "gulp-mocha": "^4.3.1",
-    "jshint": "^2.9.5",
-    "jslint": "^0.11.0",
     "mocha": "^4.0.1"
   },
   "dependencies": {
+    "config": "^1.26.2",
+    "eslint": "^4.9.0",
+    "gulp-eslint": "^4.0.0",
     "pg": "^7.3.0",
     "restify": "^6.0.1",
     "restify-plugins": "^1.6.0"
