@@ -11,7 +11,7 @@ gulp.task('lint', () => {
 
 gulp.task('test', () => {
     return gulp.src('./src/test/*.js', {read: false})
-        .pipe(mocha({reporter: 'nyan'}));
+        .pipe(mocha({reporter: 'list'}));
 });
 
 gulp.task('default', ['lint', 'test'], () => {
